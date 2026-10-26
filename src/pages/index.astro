@@ -16,7 +16,7 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 <Layout title={SITE.title} canonical={`${Astro.url.origin}/`} content={front ? { collection: "pages", id: front.data.id, slug: SITE.frontPage } : undefined}>
 	<article class="d-card d-page">
-		{front?.data.title && <h1 class="d-article__title" {...front.edit.title}>{front.data.title}</h1>}
+		{/* トップの固定ページは題名を出さない（WordPress の「Page No Title」テンプレートと同じ。取り込みで題名が「Untitled」になっている） */}
 		<div class="d-content" {...(front?.edit.content ?? {})}>
 			{front ? <PortableText value={front.data.content} components={ptComponents} /> : <p>トップページ（固定ページ「{SITE.frontPage}」）がまだありません。</p>}
 		</div>
