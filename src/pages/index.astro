@@ -1,0 +1,24 @@
+---
+// トップページ：WordPress と同じく固定ページ（site.ts の frontPage）をそのまま表示（117fx は記事なし）
+import { ptComponents } from "../diver/pt";
+import { getEmDashEntry } from "emdash";
+import { PortableText } from "emdash/ui";
+import Layout from "../diver/Layout.astro";
+import { SITE } from "../diver/site";
+
+// WordPress形式の検索URL（/?s=…）を新しい検索ページへ
+const wpSearch = Astro.url.searchParams.get("s");
+if (wpSearch !== null) return Astro.redirect(`/search?q=${encodeURIComponent(wpSearch)}`, 301);
+
+const { entry: front, cacheHint } = await getEmDashEntry("pages", SITE.frontPage);
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+---
+
+<Layout title={SITE.title} canonical={`${Astro.url.origin}/`} content={front ? { collection: "pages", id: front.data.id, slug: SITE.frontPage } : undefined}>
+	<article class="d-card d-page">
+		{front?.data.title && <h1 class="d-article__title" {...front.edit.title}>{front.data.title}</h1>}
+		<div class="d-content" {...(front?.edit.content ?? {})}>
+			{front ? <PortableText value={front.data.content} components={ptComponents} /> : <p>トップページ（固定ページ「{SITE.frontPage}」）がまだありません。</p>}
+		</div>
+	</article>
+</Layout>
